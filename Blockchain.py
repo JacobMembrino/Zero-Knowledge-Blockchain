@@ -1,5 +1,7 @@
 !# /usr/bin/python
 import * as crypto from 'crypto'
+import stringify
+from datetime import datetime
 
 class Transaction:
   def __int__(self, amount, payer, payee):
@@ -7,15 +9,15 @@ class Transaction:
     self.payer = payer
     self.payee = payee
    def toString:
-    return 
+    return 'Amount:', str(amount), 'Payer:', str(payer), 'Payee:', str(payee)
   
 class Block:
   def __int__(self, lastHash, transaction, timestamp):
-    self.lastHash: string, 
-    self.transaction: Transaction, 
-    self.timestamp = Date.now()
+    self.lastHash = string
+    self.transaction = Transaction
+    self.timestamp = now.strftime("%d/%m/%Y %H:%M:%S")
   public nonce = Math.round(Math.random() * 999999999)
-  def hash() 
+  def hash(self) 
     const str = JSON.stringify(this)
     const hash = crypto.createHash('SHA256')
     hash.update(str).end()
