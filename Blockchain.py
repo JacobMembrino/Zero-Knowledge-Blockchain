@@ -8,19 +8,17 @@ class Transaction:
     self.amount = amount
     self.payer = payer
     self.payee = payee
-   def toString:
-    return str('Amount:', str(amount), 'Payer:', str(payer), 'Payee:', str(payee))
   
 class Block:
   def __int__(self, lastHash, transaction, timestamp):
     self.lastHash = string
-    self.transaction = Transaction
+    self.transaction = transaction
     self.timestamp = now.strftime("%d/%m/%Y %H:%M:%S")
     
   public nonce = Math.round(Math.random() * 999999999)
   
   def hash(self):
-    const str = JSON.stringify(this)
+    const str = JSON.stringify(self)
     const hash = crypto.createHash('SHA256')
     hash.update(str).end()
     return hash.digest('hex')
@@ -82,7 +80,7 @@ class Wallet:
     this.publicKey = keypair.publicKey
   
 
-  sendMoney(amount: number, payeePublicKey: string):
+  sendMoney(amount, payeePublicKey):
     const transaction = new Transaction(amount, this.publicKey, payeePublicKey)
 
     const sign = crypto.createSign('SHA256')
