@@ -16,44 +16,43 @@ class Block:
     self.lastHash = string
     self.transaction = Transaction
     self.timestamp = now.strftime("%d/%m/%Y %H:%M:%S")
+    
   public nonce = Math.round(Math.random() * 999999999)
-  def hash(self) 
+  
+  def hash(self):
     const str = JSON.stringify(this)
     const hash = crypto.createHash('SHA256')
     hash.update(str).end()
     return hash.digest('hex')
 
 class Chain:
-  # Singleton instance
-  public static instance = new Chain()
-  chain: Block[]
-
   def __init__(self, chain):
     this.chain = [
       # Genesis block
       new Block('', new Transaction(100, 'genesis', 'satoshi')) ]
-
+    
+  # Singleton instance
+  public static instance = new Chain()
+  chain: Block[]
+    
   # Most recent block
   get lastBlock():
     return this.chain[this.chain.length - 1]
 
   # Proof of work system
   mine(nonce: number):
-    let solution = 1;
-    console.log('⛏️  mining...')
+    solution = 1
+    print('⛏️  mining...')
 
-    while(true):
-
+    while(1):
       const hash = crypto.createHash('MD5')
       hash.update((nonce + solution).toString()).end()
 
       const attempt = hash.digest('hex')
 
       if(attempt.substr(0,4) === '0000'):
-        console.log(`Solved: ${solution}`)
-        return solution;
-      
-
+        print(`Solved: ${solution}`)
+        return solution
       solution += 1;
 
   #Add a new block to the chain if valid signature & proof of work is complete
@@ -72,7 +71,7 @@ class Wallet:
   public publicKey: string
   public privateKey: string
 
-  constructor() 
+  def __init__(self):
     const keypair = crypto.generateKeyPairSync('rsa', {
       modulusLength: 2048,
       publicKeyEncoding: { type: 'spki', format: 'pem' },
