@@ -1,4 +1,3 @@
-!# /usr/bin/python
 import * as crypto from 'crypto'
 import stringify
 from datetime import datetime
@@ -17,8 +16,8 @@ class Block:
     
   public nonce = Math.round(Math.random() * 999999999)
   
-  def hash(self):
-    const str = JSON.stringify(self)
+  def hash():
+    const str = ''
     const hash = crypto.createHash('SHA256')
     hash.update(str).end()
     return hash.digest('hex')
@@ -27,11 +26,12 @@ class Chain:
   def __init__(self, chain):
     this.chain = [
       # Genesis block
-      new Block('', new Transaction(100, 'genesis', 'satoshi')) ]
+      new Block('', new Transaction(100, 'genesis', 'satoshi'), '') ]
     
   # Singleton instance
+  chain: block[]
   public static instance = new Chain()
-  chain: Block[]
+  
     
   # Most recent block
   get lastBlock():
