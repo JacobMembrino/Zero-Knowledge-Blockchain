@@ -1,6 +1,7 @@
-import * as crypto from 'crypto'
-import stringify
+from cryptography import cryptography
+import string
 from datetime import datetime
+import math
 
 class Transaction:
   def __int__(self, amount, payer, payee):
@@ -10,32 +11,30 @@ class Transaction:
   
 class Block:
   def __int__(self, lastHash, transaction, timestamp):
-    self.lastHash = string
-    self.transaction = transaction
-    self.timestamp = now.strftime("%d/%m/%Y %H:%M:%S")
+    self.lastHash = ''
+    self.transaction = Transaction
+    self.timestamp = datetime.strftime("%d/%m/%Y %H:%M:%S")
     
-  public nonce = Math.round(Math.random() * 999999999)
+  nonce = math.round(math.random() * 999999999)
   
   def hash():
-    const str = ''
-    const hash = crypto.createHash('SHA256')
+    str = ''
+    hash = crypto.createHash('SHA256')
     hash.update(str).end()
     return hash.digest('hex')
 
 class Chain:
   def __init__(self, chain):
-    this.chain = [
-      # Genesis block
-      new Block('', new Transaction(100, 'genesis', 'satoshi'), '') ]
+    # Genesis Block
+    self.chain = Block('', Transaction(100, 'genesis', 'satoshi'), '')
     
   # Singleton instance
   chain: block[]
   public static instance = new Chain()
   
-    
   # Most recent block
   get lastBlock():
-    return this.chain[this.chain.length - 1]
+    return Chain[chain.length - 1]
 
   # Proof of work system
   mine(nonce: number):
@@ -66,8 +65,8 @@ class Chain:
       this.chain.push(newBlock)
 
 class Wallet:
-  public publicKey: string
-  public privateKey: string
+  publicKey = ''
+  privateKey = ''
 
   def __init__(self):
     const keypair = crypto.generateKeyPairSync('rsa', {
@@ -76,17 +75,17 @@ class Wallet:
       privateKeyEncoding: { type: 'pkcs8', format: 'pem' },
     })
 
-    this.privateKey = keypair.privateKey
-    this.publicKey = keypair.publicKey
+    privateKey = keypair.privateKey
+    publicKey = keypair.publicKey
   
 
   sendMoney(amount, payeePublicKey):
-    const transaction = new Transaction(amount, this.publicKey, payeePublicKey)
+    transaction = new Transaction(amount, publicKey, payeePublicKey)
 
-    const sign = crypto.createSign('SHA256')
+    sign = crypto.createSign('SHA256')
     sign.update(transaction.toString()).end()
 
-    const signature = sign.sign(this.privateKey)
+    signature = sign.sign(this.privateKey)
     Chain.instance.addBlock(transaction, this.publicKey, signature)
 
 
