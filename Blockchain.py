@@ -9,37 +9,34 @@ class Transaction:
     self.payer = payer
     self.payee = payee
   
-class Block:
-  def __int__(self, lastHash, transaction, timestamp):
+def Block(lastHash, transaction, timestamp):
     self.lastHash = ''
     self.transaction = Transaction
     self.timestamp = datetime.strftime("%d/%m/%Y %H:%M:%S")
-    
-  nonce = math.round(math.random() * 999999999)
+    int nonce = math.round(math.random() * 999999999)
   
-  def hash():
+def hash():
     str = ''
     hash = crypto.createHash('SHA256')
     hash.update(str).end()
     return hash.digest('hex')
 
-class Chain:
-  def __init__(self, chain):
-    # Genesis Block
-    self.chain = Block('', Transaction(100, 'genesis', 'satoshi'), '')
+def Chain(chain):
+  # Genesis Block
+  Chain chain = Block('', Transaction(100, 'genesis', 'satoshi'), '')
     
   # Singleton instance
   chain: block[]
-  public static instance = new Chain()
+  Chain instance
   
   # Most recent block
-  get lastBlock():
+def get_lastBlock():
     return Chain[chain.length - 1]
 
   # Proof of work system
-  mine(nonce: number):
+def mine(nonce):
     solution = 1
-    print('⛏️  mining...')
+    print('mining...')
 
     while(1):
       const hash = crypto.createHash('MD5')
@@ -47,8 +44,8 @@ class Chain:
 
       const attempt = hash.digest('hex')
 
-      if(attempt.substr(0,4) === '0000'):
-        print(`Solved: ${solution}`)
+      if(attempt.startswith('0000')):
+        print('Solved: %s', solution)
         return solution
       solution += 1;
 
@@ -64,23 +61,18 @@ class Chain:
       this.mine(newBlock.nonce)
       this.chain.push(newBlock)
 
-class Wallet:
-  publicKey = ''
-  privateKey = ''
-
-  def __init__(self):
-    const keypair = crypto.generateKeyPairSync('rsa', {
+def Wallet():
+  dict keypair = crypto.generateKeyPairSync('rsa', {
       modulusLength: 2048,
       publicKeyEncoding: { type: 'spki', format: 'pem' },
-      privateKeyEncoding: { type: 'pkcs8', format: 'pem' },
-    })
+      privateKeyEncoding: { type: 'pkcs8', format: 'pem' })
 
-    privateKey = keypair.privateKey
-    publicKey = keypair.publicKey
+   privateKey = keypair.privateKey
+   publicKey = keypair.publicKey
   
 
-  sendMoney(amount, payeePublicKey):
-    transaction = new Transaction(amount, publicKey, payeePublicKey)
+def sendMoney(amount, payeePublicKey, Wallet):
+    transaction = Transaction(amount, Wallet.publicKey, payeePublicKey)
 
     sign = crypto.createSign('SHA256')
     sign.update(transaction.toString()).end()
@@ -90,9 +82,9 @@ class Wallet:
 
 
 # WALLET INSTANCES
-const satoshi = new Wallet()
-const bob = new Wallet()
-const alice = new Wallet()
+satoshi = Wallet()
+bob = Wallet()
+alice = Wallet()
 
 satoshi.sendMoney(50, bob.publicKey)
 bob.sendMoney(23, alice.publicKey)
