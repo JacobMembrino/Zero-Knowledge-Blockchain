@@ -52,14 +52,14 @@ class Chain:
   #Add a new block to the chain if valid signature & proof of work is complete
   def addBlock(transaction, senderPublicKey, signature):
     verify = crypto.createVerify('SHA256')
-    verify.update(transaction.toString())
+    verify = verify + transaction.toString()
 
-    const isValid = verify.verify(senderPublicKey, signature)
+    isValid = verify.verify(senderPublicKey, signature)
 
     if (isValid):
-      const newBlock = new Block(this.lastBlock.hash, transaction)
-      this.mine(newBlock.nonce)
-      this.chain.push(newBlock)
+      newBlock = new Block(newBlock.lastBlock.hash, transaction)
+      newBlock.mine(newBlock.nonce)
+      chain.append(newBlock)
 
 class Wallet:
   def __init__(self):
@@ -76,10 +76,10 @@ class Wallet:
     transaction = Transaction(amount, Wallet.publicKey, payeePublicKey)
 
     sign = crypto.createSign('SHA256')
-    sign.update(transaction.toString()).end()
+    sign = sign + transaction.toString()
 
-    signature = sign.sign(this.privateKey)
-    Chain.instance.addBlock(transaction, this.publicKey, signature)
+    signature = sign.sign(Wallet.privateKey)
+    chain.Chain.addBlock(transaction, this.publicKey, signature)
 
 
 # WALLET INSTANCES
@@ -90,4 +90,4 @@ alice = Wallet()
 satoshi.sendMoney(50, bob.publicKey)
 bob.sendMoney(23, alice.publicKey)
 alice.sendMoney(5, bob.publicKey)
-print(Chain.instance)
+print(chain)
