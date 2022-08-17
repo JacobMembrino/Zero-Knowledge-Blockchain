@@ -1,6 +1,6 @@
 from cryptography import *
 from datetime import *
-import string, math
+import string, random
 
 chain = Block[]
 
@@ -11,7 +11,7 @@ class Transaction:
     self.payee = payee
   
 class Block:
-    int nonce = math.round(math.random() * 999999999)
+    int nonce = random.randint(0, 999999999)
     
     def __init__(self, lastHash, transaction):
       self.lastHash = lasthash
@@ -25,11 +25,12 @@ class Block:
 class Chain:
   def __init__(self, chain):
     # Genesis Block
-    chain.append(Block('', Transaction(100, 'genesis', 'coin_maker'))
+    transaction1 = Transaction(100, 'genesis', 'coin_maker')
+    chain.append(Block('', transaction1)
   
   # Most recent block
   def get_lastBlock():
-    return chain[chain.length - sizeof(Block)]
+    return chain[-1]
 
   # Proof of work system
   def mine(nonce):
@@ -38,11 +39,11 @@ class Chain:
 
     while(1):
       hash = crypto.createHash('MD5')
-      hash = hash + nonce.toString() + solution.toString()
+      hash = str(hash) + str(nonce) + str(solution)
 
       attempt = hash.digest('hex')
 
-      if(attempt.startswith('0000')):
+      if(attempt[:3] == '0000'):
         print('Solved: %s', solution)
         break
       solution += 1
@@ -62,28 +63,27 @@ class Chain:
       chain.append(newBlock)
 
 class Wallet:
+  privateKey = keypair.privateKey
+  publicKey = keypair.publicKey
+                 
   def __init__(self):
     dict keypair = crypto.generateKeyPairSync('rsa', {
       modulusLength: 2048,
       publicKeyEncoding: { type: 'spki', format: 'pem' },
       privateKeyEncoding: { type: 'pkcs8', format: 'pem' })
 
-   privateKey = keypair.privateKey
-   publicKey = keypair.publicKey
-  
-
   def sendMoney(amount, payeePublicKey, Wallet):
     transaction = Transaction(amount, Wallet.publicKey, payeePublicKey)
 
     sign = crypto.createSign('SHA256')
-    sign = sign + transaction.toString()
-
+    sign = sign + str(transaction)
     signature = sign.sign(Wallet.privateKey)
-    chain.Chain.addBlock(transaction, this.publicKey, signature)
+      
+    chain.append(Chain.addBlock(transaction, publicKey, signature))
 
 
 # WALLET INSTANCES
-satoshi = Wallet()
+coin_maker = Wallet() #you
 bob = Wallet()
 alice = Wallet()
 
