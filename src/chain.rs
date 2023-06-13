@@ -2,11 +2,22 @@ use std::time::SystemTime;
 use crypto::digest::Digest;
 use crypto::sha2::Sha256;
 
+pub struct Wallet {
+    pub address: String,
+}
+
+#[derive(Clone, Debug)]
+pub struct NFT {
+    pub owner: String,
+    // Add any additional metadata fields specific to your NFT
+}
+
 #[derive(Clone, Debug)]
 pub struct Transaction {
-    sender: String,
-    receiver: String,
+    sender: Wallet,
+    receiver: Wallet,
     value: u64,
+    nft: Option<NFT>,
 }
 
 #[derive(Clone, Debug)]
@@ -17,18 +28,31 @@ pub struct Block {
     pub prev_block_hash: String,
     pub hash: String,
     pub nonce: u64,
+    pub nfts: Vec<NFT>,
 }
 
 pub struct Blockchain {
     pub blocks: Vec<Block>,
+    pub wallets: Vec<Wallet>,
+}
+
+impl Wallet {
+    pub fn new() -> Self {
+        // Implement your wallet generation logic here
+        // ...
+        Wallet {
+            address: String::from("0xABCDEF1234567890"), // Example address
+        }
+    }
 }
 
 impl Transaction {
-    pub fn new(sender: String, receiver: String, value: u64) -> Self {
+    pub fn new(sender: Wallet, receiver: Wallet, value: u64, nft: Option<NFT>) -> Self {
         Transaction {
             sender,
             receiver,
             value,
+            nft,
         }
     }
 }
@@ -40,6 +64,11 @@ impl Block {
             .unwrap()
             .as_secs();
 
+        let nfts = transactions
+            .iter()
+            .filter_map(|transaction| transaction.nft.clone())
+            .collect();
+
         let mut block = Block {
             index,
             timestamp,
@@ -47,6 +76,7 @@ impl Block {
             prev_block_hash,
             hash: String::new(),
             nonce: 0,
+            nfts,
         };
 
         block.hash = block.compute_hash();
@@ -79,12 +109,27 @@ impl Blockchain {
         let genesis_block = Block::new(0, vec![], String::from("0"));
         Blockchain {
             blocks: vec![genesis_block],
+            wallets: vec![],
         }
     }
 
-    pub fn add_block(&mut self, transactions: Vec<Transaction>) {
+    pub fn add_block(&mut self, sender_address: &str, receiver_address: &str, value: u64, nft: Option<NFT>) {
+        let sender = self.find_wallet(sender_address).unwrap().clone();
+        let receiver = self.find_wallet(receiver_address).unwrap().clone();
+        let transaction = Transaction::new(sender, receiver, value, nft);
+
         let prev_block_hash = self.blocks.last().unwrap().hash.clone();
-        let new_block = Block::new((self.blocks.len() as u64), transactions, prev_block_hash);
+        let new_block = Block::new((self.blocks.len() as u64), vec![transaction], prev_block_hash);
         self.blocks.push(new_block);
+    }
+
+    pub fn create_wallet(&mut self) -> Wallet {
+        let wallet = Wallet::new();
+        self.wallets.push(wallet.clone());
+        wallet
+    }
+
+    fn find_wallet(&self, address: &str) -> Option<&Wallet> {
+        self.wallets.iter().find(|wallet| wallet.address == address)
     }
 }

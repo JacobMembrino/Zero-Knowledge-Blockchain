@@ -1,6 +1,16 @@
+mod wallet; // Import the wallet.rs file
+use wallet::Wallet; // Import the Wallet struct from wallet.rs
+use crate::blockchain::{Blockchain, Block, Transaction}; // Import the blockchain
+
 fn main() {
-    // Create a new blockchain
     let mut blockchain = Blockchain::new();
+    let wallet1 = Wallet::new();
+    let wallet2 = Wallet::new();
+
+    blockchain.wallets.push(wallet1.clone());
+    blockchain.wallets.push(wallet2.clone());
+
+    blockchain.add_block(&wallet1.address, &wallet2.address, 10);
 
     // Add sample transactions and mine a new block
     let transactions = vec![
