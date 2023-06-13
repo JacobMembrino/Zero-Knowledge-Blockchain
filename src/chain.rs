@@ -1,15 +1,13 @@
+mod wallet; // Import the wallet.rs file
+use wallet::Wallet; // Import the Wallet struct from wallet.rs
 use std::time::SystemTime;
 use crypto::digest::Digest;
 use crypto::sha2::Sha256;
 
-pub struct Wallet {
-    pub address: String,
-}
-
 #[derive(Clone, Debug)]
 pub struct NFT {
     pub owner: String,
-    // Add any additional metadata fields specific to your NFT
+    pub token_id: String,
 }
 
 #[derive(Clone, Debug)]
@@ -34,16 +32,6 @@ pub struct Block {
 pub struct Blockchain {
     pub blocks: Vec<Block>,
     pub wallets: Vec<Wallet>,
-}
-
-impl Wallet {
-    pub fn new() -> Self {
-        // Implement your wallet generation logic here
-        // ...
-        Wallet {
-            address: String::from("0xABCDEF1234567890"), // Example address
-        }
-    }
 }
 
 impl Transaction {
