@@ -1,8 +1,8 @@
 mod wallet; // Import the wallet.rs file
 use wallet::Wallet; // Import the Wallet struct from wallet.rs
 use std::time::SystemTime;
-use crypto::digest::Digest;
-use crypto::sha2::Sha256;
+use rust_crypto::digest::Digest;
+use rust_crypto::sha2::Sha256;
 
 #[derive(Clone, Debug)]
 pub struct NFT {
