@@ -4,6 +4,5 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-crypto = "0.2"
-oqs = "0.8.0"
-rust-crypto = "0.2"
+oqs = "0.7.2"
+rust-crypto = "0.2.36"

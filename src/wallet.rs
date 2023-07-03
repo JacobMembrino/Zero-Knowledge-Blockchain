@@ -1,6 +1,5 @@
 use oqs;
-use rust_crypto::digest::Digest;
-use rust_crypto::sha3::Keccak256;
+use sha3::{Digest, Keccak256};
 
 pub struct Wallet {
     pub address: String,
@@ -29,19 +28,18 @@ fn generate_key_pair() -> Result<KeyPair, Box<dyn std::error::Error>> {
     let alg = ctx.default_sig_alg().unwrap();
     let mut sig = ctx.sig_new(alg)?; // Create a signature object
 
-    let public_key = sig.keypair()?;
-    let private_key = sig.export_secret_key()?;
+    let (public_key, private_key) = sig.keypair()?;
 
     Ok(KeyPair {
-        address: String::from(generate_address), 
-        private_key: String::from(private_key),
+        address: generate_address(&public_key),
+        private_key: String::from_utf8(private_key)?,
     })
 }
 
 fn generate_address(public_key: &[u8]) -> String {
     let mut hasher = Keccak256::new();
-    hasher.input(public_key);
-    let hash = hasher.result();
+    hasher.update(public_key);
+    let hash = hasher.finalize();
 
     // Take the last 20 bytes of the hash
     let address_bytes = &hash[hash.len() - 20..];

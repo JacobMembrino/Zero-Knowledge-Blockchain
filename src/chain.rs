@@ -1,8 +1,7 @@
-mod wallet; // Import the wallet.rs file
-use wallet::Wallet; // Import the Wallet struct from wallet.rs
-use std::time::SystemTime;
-use rust_crypto::digest::Digest;
-use rust_crypto::sha2::Sha256;
+use crate::wallet::Wallet;
+use ring::digest::{Context, Digest, SHA256};
+use std::time::{SystemTime, UNIX_EPOCH};
+use thiserror::Error;
 
 #[derive(Clone, Debug)]
 pub struct NFT {
@@ -75,11 +74,11 @@ impl Block {
 
     fn compute_hash(&self) -> String {
         let mut hasher = Sha256::new();
-        hasher.input_str(&format!(
+        let data = format!(
             "{}{}{:?}{}{}",
             self.index, self.timestamp, self.transactions, self.prev_block_hash, self.nonce
-        ));
-
+        );
+        hasher.input(data.as_bytes());
         hasher.result_str()
     }
 
@@ -101,23 +100,44 @@ impl Blockchain {
         }
     }
 
-    pub fn add_block(&mut self, sender_address: &str, receiver_address: &str, value: u64, nft: Option<NFT>) {
-        let sender = self.find_wallet(sender_address).unwrap().clone();
-        let receiver = self.find_wallet(receiver_address).unwrap().clone();
-        let transaction = Transaction::new(sender, receiver, value, nft);
+    pub fn add_block(
+        &mut self,
+        sender_address: &str,
+        receiver_address: &str,
+        value: u64,
+        nft: Option<NFT>,
+    ) -> Result<(), BlockchainError> {
+        let sender = self
+            .find_wallet(sender_address)
+            .ok_or(BlockchainError::WalletNotFound)?;
+        let receiver = self
+            .find_wallet(receiver_address)
+            .ok_or(BlockchainError::WalletNotFound)?;
+        let transaction = Transaction::new(sender.clone(), receiver.clone(), value, nft);
 
         let prev_block_hash = self.blocks.last().unwrap().hash.clone();
-        let new_block = Block::new((self.blocks.len() as u64), vec![transaction], prev_block_hash);
+        let new_block = Block::new(
+            (self.blocks.len() as u64),
+            vec![transaction],
+            prev_block_hash,
+        );
         self.blocks.push(new_block);
+        Ok(())
     }
 
-    pub fn create_wallet(&mut self) -> Wallet {
-        let wallet = Wallet::new();
+    pub fn create_wallet(&mut self) -> Result<Wallet, Box<dyn std::error::Error>> {
+        let wallet = Wallet::new()?;
         self.wallets.push(wallet.clone());
-        wallet
+        Ok(wallet)
     }
 
     fn find_wallet(&self, address: &str) -> Option<&Wallet> {
         self.wallets.iter().find(|wallet| wallet.address == address)
     }
+}
+
+#[derive(Error, Debug)]
+pub enum BlockchainError {
+    #[error("Wallet not found")]
+    WalletNotFound,
 }
