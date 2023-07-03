@@ -4,5 +4,10 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-oqs = "0.7.2"
-rust-crypto = "0.2.36"
+sha3 = "0.9.1"
+ring = "0.16.20"
+hex = "0.4.3"
+rsa = "0.5"
+rand = "0.8"
+pem = "1.0"
+thiserror = "1.0.40"

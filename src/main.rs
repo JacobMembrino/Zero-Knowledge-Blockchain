@@ -1,53 +1,29 @@
-mod wallet; // Import the wallet.rs file
-use crate::blockchain::{Block, Blockchain, Transaction, NFT};
-use wallet::Wallet; // Import the Wallet struct from wallet.rs // Import the blockchain
+mod chain;
+mod wallet;
+use chain::{Blockchain, NFT};
+use wallet::Wallet;
 
 fn main() {
+    // Create a new blockchain
     let mut blockchain = Blockchain::new();
-    let wallet1 = Wallet::new().expect("Failed to create wallet1");
-    let wallet2 = Wallet::new().expect("Failed to create wallet2");
 
-    blockchain.wallets.push(wallet1.clone());
-    blockchain.wallets.push(wallet2.clone());
+    // Create wallets
+    let wallet1 = blockchain
+        .create_wallet()
+        .expect("Failed to create wallet1");
+    let wallet2 = blockchain
+        .create_wallet()
+        .expect("Failed to create wallet2");
 
-    let nft = Some(NFT {
-        owner: String::from("Alice"),
-        token_id: String::from("NFT1"),
-    });
-    blockchain.add_block(&wallet1.address, &wallet2.address, 10, nft.clone());
+    // Print the addresses of the wallets
+    println!("Address of Wallet 1: {}", wallet1.address);
+    println!("Address of Wallet 2: {}", wallet2.address);
 
-    // Add sample transactions and mine a new block
-    let transactions = vec![
-        Transaction::new(wallet1.clone(), wallet2.clone(), 100, None),
-        Transaction::new(wallet2.clone(), wallet1.clone(), 50, None),
-    ];
-    for transaction in transactions {
-        blockchain.add_block(
-            &transaction.sender.address,
-            &transaction.receiver.address,
-            transaction.value,
-            transaction.nft.clone(),
-        );
-    }
+    // Add a block with a transaction
+    blockchain
+        .add_block(&wallet1.address, &wallet2.address, 10, None)
+        .expect("Failed to add block");
 
-    // Add more transactions and mine another block
-    let wallet3 = Wallet::new().expect("Failed to create wallet3");
-    blockchain.wallets.push(wallet3.clone());
-    let transactions = vec![
-        Transaction::new(wallet1.clone(), wallet3.clone(), 200, None),
-        Transaction::new(wallet3.clone(), wallet2.clone(), 75, None),
-    ];
-    for transaction in transactions {
-        blockchain.add_block(
-            &transaction.sender.address,
-            &transaction.receiver.address,
-            transaction.value,
-            transaction.nft.clone(),
-        );
-    }
-
-    // Display the current state of the blockchain
-    for block in blockchain.blocks.iter() {
-        println!("{:?}", block);
-    }
+    // Print the blockchain
+    println!("{:#?}", blockchain.blocks);
 }

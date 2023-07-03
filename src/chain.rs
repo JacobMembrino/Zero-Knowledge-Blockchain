@@ -1,6 +1,6 @@
 use crate::wallet::Wallet;
-use ring::digest::{Context, Digest, SHA256};
-use std::time::{SystemTime, UNIX_EPOCH};
+use ring::digest::{digest, SHA256};
+use std::time::SystemTime;
 use thiserror::Error;
 
 #[derive(Clone, Debug)]
@@ -73,13 +73,12 @@ impl Block {
     }
 
     fn compute_hash(&self) -> String {
-        let mut hasher = Sha256::new();
         let data = format!(
             "{}{}{:?}{}{}",
             self.index, self.timestamp, self.transactions, self.prev_block_hash, self.nonce
         );
-        hasher.input(data.as_bytes());
-        hasher.result_str()
+        let hash = digest(&SHA256, data.as_bytes());
+        hex::encode(hash.as_ref())
     }
 
     fn mine_block(&mut self, difficulty: usize) {
@@ -116,11 +115,7 @@ impl Blockchain {
         let transaction = Transaction::new(sender.clone(), receiver.clone(), value, nft);
 
         let prev_block_hash = self.blocks.last().unwrap().hash.clone();
-        let new_block = Block::new(
-            (self.blocks.len() as u64),
-            vec![transaction],
-            prev_block_hash,
-        );
+        let new_block = Block::new(self.blocks.len() as u64, vec![transaction], prev_block_hash);
         self.blocks.push(new_block);
         Ok(())
     }
