@@ -3,7 +3,6 @@ target/
 
 # Docker build artifacts
 .dockerignore
-Dockerfile
 .devcontainer/
 
 # IDE and editor files
