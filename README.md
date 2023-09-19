@@ -3,7 +3,10 @@ This is a piece of blockchain technology that seeks to create an Open-Source sol
 
 # Setup
 Clone the repository to folder, enter the folder, then run 
-`docker build -t blockchain .`
-`docker run --name Blockchain blockchain`
+
+```
+docker build -t blockchain .
+docker run --name Blockchain blockchain
+```
 
 All done!
