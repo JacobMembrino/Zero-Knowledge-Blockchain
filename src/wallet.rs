@@ -1,14 +1,14 @@
 // Kyber and other such latice algorithms are quantum safe
 // and will be used in this and all future blockchain projects
 
-use rsa::pkcs1::ToRsaPublicKey;
-use rsa::RsaPrivateKey;
+use rsa::{RsaPrivateKey, RsaPublicKey};
+use rsa::pkcs1::{EncodeRsaPublicKey, LineEnding};
 use sha3::{Digest, Keccak256};
 
 #[derive(Clone, Debug)]
 pub struct Wallet {
     pub address: String,
-    pub private_key: rsa::RsaPrivateKey,
+    pub priv_key: rsa::RsaPrivateKey,
 }
 
 impl Wallet {
@@ -18,26 +18,27 @@ impl Wallet {
 
         Ok(Wallet {
             address: key_pair.address,
-            private_key: key_pair.private_key,
+            priv_key: key_pair.priv_key,
         })
     }
 }
 
 struct KeyPair {
     address: String,
-    private_key: RsaPrivateKey,
+    priv_key: RsaPrivateKey,
 }
 
 fn generate_key_pair() -> Result<KeyPair, rsa::errors::Error> {
+    let mut rng = rand::thread_rng();
     let bits = 2048;
-    let private_key = RsaPrivateKey::new(&mut rand::thread_rng(), bits)?;
-    let public_key = private_key.to_public_key();
+    let priv_key = RsaPrivateKey::new(&mut rng, bits).expect("failed to generate a key");
+    let pub_key = RsaPublicKey::from(&priv_key);
 
-    let public_key_pem = public_key.to_pkcs1_pem()?;
+    let public_key_pem = pub_key.to_pkcs1_pem(LineEnding::CRLF)?;
 
     Ok(KeyPair {
         address: generate_address(public_key_pem.as_bytes()),
-        private_key,
+        priv_key,
     })
 }
 

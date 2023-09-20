@@ -1,7 +1,6 @@
 mod chain;
 mod wallet;
-use chain::{Blockchain, NFT};
-use wallet::Wallet;
+use chain::{Blockchain};
 
 fn main() {
     // Create a new blockchain
